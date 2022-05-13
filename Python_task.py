@@ -52,13 +52,26 @@ for x in os.listdir('.'):
 extension = 'csv'
 all_filenames = [i for i in glob.glob('*.{}'.format(extension))]
 
-file_list = []
-for f in all_filenames:
+#Thank you again for the oppurunity mo :) , brings me back to learning mode and hang of the possible exceptions
+
+#The reason why i have used the try catch here is above are dat and txt file and read_csv doesnt nothing to them, if its a faulty .dat,.txt, its jus ignoring 
+
+# i have used alot of test csv data files of my own scenarios, one without data, one with improper format, with data before headers etc in the folders and did some #thorough testing and executed, then i have listed only Parsererror, EmptyDataerror, because those are some possible scenarios here, if there is any impropr headers #or data inlcuded before the headers and also if the csv file is empty then it catches and displays the proper error message with the respective filename.
+#there are other usual errors like Filenotfound ( which shows up, when we are reading a specific file and if its not found, but i didnt use it here as its not #applicable here as we are doing a regex and searching and teling it to dont do anything if not found scenario) and PerformanceWarning might occur in scenarios #where its taking too much time because of to much processing of files, then by the exceptin, we can supress it too,this might occur in your proj in live prod #sceanrios
+
+try:
+  file_list = []
+  for f in all_filenames:
     data = pd.read_csv(f)
     data['source_file'] = f  # create a column with the name of the file
     file_list.append(data)
 
-
+except pd.errors.EmptyDataError:
+    print(f, 'has No data.')
+except pd.errors.ParserError:
+    print(f, 'has incorrect data format.')
+  
+    
 #combine all files in the list
 combined_csv = pd.concat([pd.read_csv(f) for f in all_filenames ])
 combined_filename = pd.concat(file_list, axis=0, ignore_index=True)
